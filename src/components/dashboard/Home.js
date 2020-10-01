@@ -8,9 +8,12 @@ class Home extends Component {
 	constructor(props) {
 		super(props);
 		this.nonFriends = [];
+		this.state = {
+			updated : false
+		}
 	}
 
-	componentDidMount() {
+	componentWillMount() {
 		let targetUrl = '/api/users/home';
 		axios({
 			method : 'post',
@@ -26,9 +29,11 @@ class Home extends Component {
 			//got the list of all the users who are not the friends
 			console.log(res);
 			if(res) {
-				console.log("Hi");
 				this.nonFriends = res.data; 
-				// console.log(this.nonFriends);
+				console.log(this.nonFriends);
+				this.setState({
+					updated : true
+				});
 			}
 			else {
 				console.log("All are your friends");
@@ -45,10 +50,18 @@ class Home extends Component {
 	render() {
 		console.log("Home id : "+this.props.id);
 		//fetch all the non-friends with the given id
-		
+		//all the non-friends are stored in this.nonFriends field
+		let rows = [];
+		for(let i=0;i<this.nonFriends.length;i++) {
+			let nf = this.nonFriends[i];
+			// console.log(nf);
+			//the current id of the user also needs to be passed to the card component
+			rows.push(<Card nonFriendId = {nf} userId = {this.props.id}/>)
+		}
+		console.log(rows);
 		return(
 			<div >
-				<Card />
+				{rows}
 			</div>
 		);
 	}
