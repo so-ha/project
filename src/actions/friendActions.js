@@ -31,7 +31,7 @@ export const addFriend = (userData, history) => dispatch => {
 };
 
 //find friends of id
-export const addFriend = (userData, history) => dispatch => {
+export const findFriend = (userData, history) => dispatch => {
   axios
     .post("/api/users/friends", userData)
     .then(res => res.json())
@@ -56,7 +56,7 @@ export const addFriend = (userData, history) => dispatch => {
 };
 
 //find non friends of id
-export const addFriend = (userData, history) => dispatch => {
+export const findNonFriend = (userData, history) => dispatch => {
   axios
     .post("/api/users/home", userData)
     .then(res => res.json())
