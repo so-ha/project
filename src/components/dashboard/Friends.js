@@ -1,27 +1,66 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import Graph from 'react-graph-vis';
+import axios from 'axios';
 
 class Friends extends Component {
 	//renders the bubble map of all the friends and friends of the user's friend, basically mapping all the users of the database
 	//fetch all the lists of the friends
+	constructor(props) {
+		super(props);
+		this.state = {
+			users : [],
+			node : [],
+			edge : []
+		}
+	}
+	componentDidMount() {
+		let targetUrl = '/api/users/findDBUsers';
+			axios({
+					method : 'get',
+					url : targetUrl
+				})
+				.then(res => {
+					// console.log(res.data);
+					if(res) {
+						let n = 1;
+						let n1 = [];
+						let user = res.data;
+						for(let i=0;i<user.length;i++) {
+							let obj = {
+								id : n,
+								label : user[i].name,
+								title : 'node' + n + 'tootip text'
+							}
+							n1.push(obj);
+							n++; 
+						}
+						this.setState({
+							users : user,
+							node : n1
+						});
+					}
+					else {
+						console.log("No Database users found!");
+					}
+				})
+				.catch(err => {
+					console.log(err)
+				});
+	}
 	render() {
-			const graph = {
-		    nodes: [
-		      { id: 1, label: "a1", title: "node 1 tootip text" },
-		      { id: 2, label: "a2", title: "node 2 tootip text" },
-		      { id: 3, label: "a3", title: "node 3 tootip text" },
-		      { id: 4, label: "a4", title: "node 4 tootip text" },
-		      { id: 5, label: "a5", title: "node 5 tootip text" }
-		    ],
+		const graph = {
+			//in nodes, we need to find all the users in our database
+		    nodes: this.state.node,
+		    //edges will be defined by the friend relationship
 		    edges: [
-		      { from: 1, to: 2 },
-		      { from: 1, to: 3 },
-		      { from: 2, to: 4 },
-		      { from: 2, to: 5 }
+		      // { from: 1, to: 2 },
+		      // { from: 1, to: 3 },
+		      // { from: 2, to: 4 },
+		      // { from: 2, to: 5 }
 		    ]
 		  };
-		  const options = {
+		const options = {
 		    layout: {
 		      hierarchical: true
 		    },
@@ -31,14 +70,13 @@ class Friends extends Component {
 		    height: "500px"
 		  };
 
-		  const events = {
+		const events = {
 		    select: function(event) {
 		      var { nodes, edges } = event;
 		    }
 		  };
 		return(
 			<div>
-				<h1>Hi</h1>
 				<Graph
 			      graph={graph}
 			      options={options}
